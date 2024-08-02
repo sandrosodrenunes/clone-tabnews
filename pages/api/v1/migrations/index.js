@@ -37,6 +37,19 @@ export default async function migrations(request, response) {
 
     return response.status(200).json(migradetMigration);
   }
-  //test
+
+  try {
+    if (request.method === "DELETE") {
+      console.log("Entrou no DELETE");
+      const pendingMigrations = await migrationRunner(defaultMigrationOptions);
+      await dbClient.end();
+      return response.status(405).json(pendingMigrations);
+    }
+  } catch (error) {
+    console.log(error);
+  } finally {
+    await dbClient.end();
+  }
+
   return response.status(405).end();
 }
